@@ -27,10 +27,10 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            hhmbroekman/student-app:latest
+            tomacgg/devops-security-app:latest
   test:
     name: Test
-    needs: [ scan ]
+    # needs: [ scan ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
