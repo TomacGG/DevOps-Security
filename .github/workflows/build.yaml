@@ -27,7 +27,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            hhmbroekman/student-app:latest
+            tomacgg/devops-security-app:latest
   test:
     name: Test
     # needs: [ scan ]
