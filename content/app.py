@@ -15,11 +15,10 @@ db = sqlite3.connect("db.sqlite3", check_same_thread=False)
 db.row_factory = sqlite3.Row
 
 # Log all requests for analytics purposes
+log_file = open('access.log', 'a', buffering=1)
 @app.before_request
 def log_request():
-    with open('access.log', 'a', buffering=1) as log_file:
-        log_file.write(f"{request.method} {request.path} {dict(request.form) if request.form else ''}\n")
-
+    log_file.write(f"{request.method} {request.path} {dict(request.form) if request.form else ''}\n")
 
 # Set user_id on request if user is logged in, or else set it to None.
 @app.before_request
@@ -34,6 +33,7 @@ def check_authentication():
 @app.route("/")
 def index():
     quotes = db.execute("select id, text, attribution from quotes order by id").fetchall()
+
     return Response(quotes, request.user_id, request.args.get('error'))
 
 
@@ -106,7 +106,7 @@ def signin():
             user_id = cursor.lastrowid
     
     response = make_response(redirect('/'))
-    response.set_cookie('user_id', str(user_id), secure=True, httponly=True, samesite='Lax')
+    response.set_cookie('user_id', str(user_id))
     return response
 
 
