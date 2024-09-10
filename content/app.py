@@ -19,7 +19,6 @@ log_file = open('access.log', 'a', buffering=1)
 def log_request():
     log_file.write(f"{request.method} {request.path} {dict(request.form) if request.form else ''}\n")
 
-
 # Set user_id on request if user is logged in, or else set it to None.
 @app.before_request
 def check_authentication():
@@ -48,7 +47,12 @@ def get_comments_page(quote_id):
 @app.route("/quotes", methods=["POST"])
 def post_quote():
     with db:
-        db.execute(f"""insert into quotes(text,attribution) values("{request.form['text']}","{request.form['attribution']}")""")
+        db.execute("""
+    INSERT INTO quotes (text, attribution) 
+    VALUES (:text, :attribution)
+    """, {"text": request.form['text'], "attribution": request.form['attribution']}
+)
+
     return redirect("/#bottom")
 
 
@@ -56,7 +60,15 @@ def post_quote():
 @app.route("/quotes/<int:quote_id>/comments", methods=["POST"])
 def post_comment(quote_id):
     with db:
-        db.execute(f"""insert into comments(text,quote_id,user_id) values("{request.form['text']}",{quote_id},{request.user_id})""")
+        db.execute("""
+    INSERT INTO comments (text, quote_id, user_id) 
+    VALUES (:text, :quote_id, :user_id)
+    """, {
+        "text": request.form['text'],
+        "quote_id": quote_id,
+        "user_id": request.user_id
+    }
+)
     return redirect(f"/quotes/{quote_id}#bottom")
 
 
@@ -65,8 +77,14 @@ def post_comment(quote_id):
 def signin():
     username = request.form["username"].lower()
     password = request.form["password"]
+    
+    user = db.execute("""
+    SELECT id, password 
+    FROM users 
+    WHERE name = :username
+    """, {"username": username}
+).fetchone()
 
-    user = db.execute(f"select id, password from users where name='{username}'").fetchone()
     if user: # user exists
         if password != user['password']:
             # wrong! redirect to main page with an error message
@@ -74,7 +92,15 @@ def signin():
         user_id = user['id']
     else: # new sign up
         with db:
-            cursor = db.execute(f"insert into users(name,password) values('{username}', '{password}')")
+            cursor = db.execute("""
+    INSERT INTO users (name, password) 
+    VALUES (:username, :password)
+    """, {
+        "username": username,
+        "password": password
+    }
+)
+
             user_id = cursor.lastrowid
     
     response = make_response(redirect('/'))
