@@ -49,7 +49,7 @@ jobs:
         ignore-base: false
         ignore-unchanged: false
         write-comment: true
-        github-token: ${{ secrets. PERSONAL_ACCESS_TOKEN }}
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         exit-code: false
         exit-on: vulnerability
 
