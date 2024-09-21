@@ -6,7 +6,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
@@ -39,6 +38,7 @@ jobs:
       with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
     - name: Docker Scout CVEs
       uses: docker/scout-action@v1.5.0
       with:
@@ -81,6 +81,7 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
       - run: |
               sudo kubectl delete deployment --all              
               sudo kubectl apply -f ${{ github.workspace }}/kubernetes/deployment.yaml --force
@@ -89,14 +90,18 @@ jobs:
   automated-api-tests:
     name: Automated-API-Tests
     needs: [ deploy ]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+        
       - name: Run API tests
         run: |
           postman collection run "30665597-dfd0780b-a8ab-42c8-a6ec-9070c7161ded"
