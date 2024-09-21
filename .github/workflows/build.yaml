@@ -90,7 +90,7 @@ jobs:
   automated-api-tests:
     name: Automated-API-Tests
     needs: [ deploy ]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
