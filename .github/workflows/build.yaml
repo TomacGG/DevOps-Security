@@ -95,13 +95,18 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-        
+
       - name: Run API tests
         run: |
           postman collection run "30665597-dfd0780b-a8ab-42c8-a6ec-9070c7161ded"
