@@ -60,13 +60,13 @@ def page(content,user_id,title,error=None):
 """
     else:
         links = f"""
-<label class="link" for="signinCheckbox">Inloggen daar</label>
+<label class="link" for="signinCheckbox">Inloggen</label>
 """
 
     return f"""<!DOCTYPE html>
 <html lang="en-US">
 <head>
-  <title>{title or "Quoter XP"}</title>
+  <title>{title or "Quoter XP - Thomas"}</title>
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
